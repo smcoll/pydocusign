@@ -189,12 +189,12 @@ class Signer(Recipient):
     """
     attributes = ['clientUserId', 'email', 'emailBody', 'emailSubject', 'name',
                   'recipientId', 'routingOrder', 'supportedLanguage', 'tabs',
-                  'accessCode']
+                  'accessCode', 'excludedDocuments']
 
     def __init__(self, clientUserId=None, email='', emailBody=None,
                  emailSubject=None, name='', recipientId=None, routingOrder=0,
                  supportedLanguage=None, tabs=None, userId=None,
-                 accessCode=None):
+                 accessCode=None, excudedDocuments=None):
         """Setup."""
         #: If ``None`` then the recipient is remote (email sent) else embedded.
         self.clientUserId = clientUserId
@@ -234,6 +234,11 @@ class Signer(Recipient):
 
         #: Access code required for signer before signing the document
         self.accessCode = accessCode
+
+        #: List of ids for documents that are not visible to this recipient.
+        # Document Visibility must be enabled for the account and the
+        # enforceSignerVisibility property must be set to true.
+        self.excludedDocuments = excudedDocuments or []
 
     def to_dict(self):
         """Return dict representation of model.
@@ -306,6 +311,7 @@ class Signer(Recipient):
             'routingOrder': self.routingOrder,
             'tabs': {},
             'accessCode': self.accessCode,
+            'excludedDocuments': self.excludedDocuments
         }
         if self.emailBody or self.emailSubject or self.supportedLanguage:
             data['emailNotification'] = {
