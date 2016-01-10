@@ -194,7 +194,7 @@ class Signer(Recipient):
     def __init__(self, clientUserId=None, email='', emailBody=None,
                  emailSubject=None, name='', recipientId=None, routingOrder=0,
                  supportedLanguage=None, tabs=None, userId=None,
-                 accessCode=None, excudedDocuments=None):
+                 accessCode=None, excludedDocuments=None):
         """Setup."""
         #: If ``None`` then the recipient is remote (email sent) else embedded.
         self.clientUserId = clientUserId
@@ -238,7 +238,7 @@ class Signer(Recipient):
         #: List of ids for documents that are not visible to this recipient.
         # Document Visibility must be enabled for the account and the
         # enforceSignerVisibility property must be set to true.
-        self.excludedDocuments = excudedDocuments or []
+        self.excludedDocuments = excludedDocuments or []
 
     def to_dict(self):
         """Return dict representation of model.
