@@ -256,19 +256,11 @@ class DocuSignClient(object):
         post a real request on DocuSign API for each test, whereas we want to
         check that the HTTP request's parts meet the DocuSign specification.
 
-        .. warning::
-
-           Only one document is supported at the moment. This is a limitation
-           of `pydocusign`, not of `DocuSign`.
-
         """
         if not self.account_url:
             self.login_information()
         url = '{account}/envelopes'.format(account=self.account_url)
         data = envelope.to_dict()
-        document = envelope.documents[0].data
-        document.seek(0)
-        file_content = document.read()
         body = str(
             "\r\n"
             "\r\n"
@@ -278,14 +270,24 @@ class DocuSignClient(object):
             "\r\n"
             "{json_data}\r\n"
             "--myboundary\r\n"
-            "Content-Type:application/pdf\r\n"
-            "Content-Disposition: file; "
-            "filename=\"document.pdf\"; "
-            "documentid=1 \r\n"
-            "\r\n"
-            "{file_data}\r\n"
-            "--myboundary--\r\n"
-            "\r\n".format(json_data=json.dumps(data), file_data=file_content))
+            .format(json_data=json.dumps(data)))
+        for doc in envelope.documents:
+            document = doc.data
+            document.seek(0)
+            file_content = document.read()
+            document_part = str(
+                "\r\n"
+                # "Content-Type:application/pdf\r\n"
+                "Content-Disposition: file; "
+                "filename=\"{file_name}\"; "
+                "documentid={id} \r\n"
+                "\r\n"
+                "{file_data}\r\n"
+                "--myboundary--\r\n"
+                "\r\n".format(file_name=document.name,
+                              id=document.documentId,
+                              file_data=file_content))
+            body += document_part
         headers = self.base_headers()
         headers['Content-Type'] = "multipart/form-data; boundary=myboundary"
         headers['Content-Length'] = len(body)
