@@ -275,7 +275,7 @@ class DocuSignClient(object):
             document = doc.data
             document.seek(0)
             file_content = document.read()
-            document_part = str(
+            body += str(
                 "\r\n"
                 # "Content-Type:application/pdf\r\n"
                 "Content-Disposition: file; "
@@ -284,10 +284,9 @@ class DocuSignClient(object):
                 "\r\n"
                 "{file_data}\r\n"
                 "--myboundary--\r\n"
-                "\r\n".format(file_name=document.name,
-                              id=document.documentId,
+                "\r\n".format(file_name=doc.name,
+                              id=doc.documentId,
                               file_data=file_content))
-            body += document_part
         headers = self.base_headers()
         headers['Content-Type'] = "multipart/form-data; boundary=myboundary"
         headers['Content-Length'] = len(body)
