@@ -394,6 +394,20 @@ class DocuSignClient(object):
         parts = self._create_envelope_from_template_request(envelope)
         return self._create_envelope(envelope, parts)
 
+    def void_envelope(self, envelopeId, voidedReason):
+        """PUT to /{account}/envelopes/{envelopeId} with 'voided' status and
+        voidedReason, and return JSON."""
+        if not self.account_url:
+            self.login_information()
+        url = '/accounts/{accountId}/envelopes/{envelopeId}' \
+              .format(accountId=self.account_id,
+                      envelopeId=envelopeId)
+        data = {
+            'status': 'voided',
+            'voidedReason': voidedReason
+        }
+        return self.put(url, data=data)
+
     def get_envelope_recipients(self, envelopeId):
         """GET {account}/envelopes/{envelopeId}/recipients and return JSON."""
         if not self.account_url:
