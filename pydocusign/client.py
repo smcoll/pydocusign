@@ -530,4 +530,4 @@ class DocuSignClient(object):
             self.login_information()
         url = '/accounts/{accountId}/connect/failures' \
               .format(accountId=self.account_id)
-        return self.get(url)
+        return self.get(url)['failures']
