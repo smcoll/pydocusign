@@ -524,3 +524,10 @@ class DocuSignClient(object):
                       templateId=templateId)
         return self.get(url)
 
+    def get_connect_failures(self):
+        """GET a list of DocuSign Connect failures."""
+        if not self.account_url:
+            self.login_information()
+        url = '/accounts/{accountId}/connect/failures' \
+              .format(accountId=self.account_id)
+        return self.get(url)
